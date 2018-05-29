@@ -10,7 +10,7 @@
 
 
 static NSString * const SFYPlayerStatePreferenceKey = @"ShowPlayerState";
-static NSString * const SFYPlayerDockIconPreferenceKey = @"YES";
+static NSString * const SFYPlayerHideDockIconPreferenceKey = @"HideDockIcon";
 
 @interface SFYAppDelegate ()
 
@@ -24,9 +24,10 @@ static NSString * const SFYPlayerDockIconPreferenceKey = @"YES";
 
 - (void)applicationDidFinishLaunching:(NSNotification * __unused)aNotification
 {
-    //Initialize the variable the getDockIconVisibility method checks
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:SFYPlayerDockIconPreferenceKey];
-    
+    if (![self getDockIconVisibility]) {
+        // Hide the dock icon, in accordance with the user's preference
+        [NSApp setActivationPolicy: NSApplicationActivationPolicyAccessory];
+    }
     self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
     self.statusItem.highlightMode = YES;
     
@@ -34,7 +35,7 @@ static NSString * const SFYPlayerDockIconPreferenceKey = @"YES";
     
     self.playerStateMenuItem = [[NSMenuItem alloc] initWithTitle:[self determinePlayerStateMenuItemTitle] action:@selector(togglePlayerStateVisibility) keyEquivalent:@""];
     
-    self.dockIconMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Hide Dock Icon", nil) action:@selector(toggleDockIconVisibility) keyEquivalent:@""];
+    self.dockIconMenuItem = [[NSMenuItem alloc] initWithTitle:[self determineDockIconMenuItemTitle] action:@selector(toggleDockIconVisibility) keyEquivalent:@""];
     
     [menu addItem:self.playerStateMenuItem];
     [menu addItem:self.dockIconMenuItem];
@@ -127,12 +128,13 @@ static NSString * const SFYPlayerDockIconPreferenceKey = @"YES";
 
 - (BOOL)getDockIconVisibility
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:SFYPlayerDockIconPreferenceKey];
+    // Return YES if the dock icon should be hidden or if the preference doesn't exist
+    return ![[NSUserDefaults standardUserDefaults] boolForKey:SFYPlayerHideDockIconPreferenceKey];
 }
 
 - (void)setDockIconVisibility:(BOOL)visible
 {
-   [[NSUserDefaults standardUserDefaults] setBool:visible forKey:SFYPlayerDockIconPreferenceKey];
+   [[NSUserDefaults standardUserDefaults] setBool:!visible forKey:SFYPlayerHideDockIconPreferenceKey];
 }
 
 - (void)toggleDockIconVisibility
