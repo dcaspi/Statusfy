@@ -7,4 +7,4 @@ Spotify in your status bar.
 
 <img src="https://raw.github.com/paulyoung/Statusfy/master/screenshot.png" alt="Screenshot" width="439" height="67" />
 
-[Download](https://github.com/paulyoung/Statusfy/releases)
+[Download](https://github.com/dcaspi/Statusfy/releases)
